@@ -1,4 +1,3 @@
-from pickle import TRUE
 import numpy as np
 
 PATH_X_TRAIN = "./data/X_train.csv"
@@ -6,11 +5,12 @@ PATH_Y_TRAIN = "./data/Y_train.csv"
 PATH_X_TEST = "./data/X_test.csv"
 PATH_Y_TEST = "./data/Y_test.csv"
 IS_CONTAINHEAD = True
+IS_NORMALIZE = False
+NEED_RESHAPE = False
 PENALTY = 0.001
 THRESHOLD = 1e-19
 STEP_SIZE = 0.0003
 MAX_ITERATION = 6000
-IS_NORMALIZE = False
 
 
 def change_dir():
@@ -20,12 +20,13 @@ def change_dir():
     return sys.path[0]
 
 
-def read_csv(path, option="x"):
+def read_csv(path, option="x", need_reshape=NEED_RESHAPE):
     data = np.loadtxt(path, dtype=float, delimiter=',',
                       skiprows=int(IS_CONTAINHEAD))
     if option == "y":
         data[data == 0] = -1
-        data = np.reshape(data, (np.shape(data)[0], 1))
+        if need_reshape:
+            data = np.reshape(data, (np.shape(data)[0], 1))
     return data
 
 
@@ -37,7 +38,7 @@ def normalize_data(data):
     return data
 
 
-def caculate_by_gradient_decent(train_x, train_y, test_x, test_y, penalty=PENALTY, threshold=THRESHOLD, step_size=STEP_SIZE, max_iteration=MAX_ITERATION,is_normalize=IS_NORMALIZE):
+def caculate_by_gradient_decent(train_x, train_y, test_x, test_y, penalty=PENALTY, threshold=THRESHOLD, step_size=STEP_SIZE, max_iteration=MAX_ITERATION, is_normalize=IS_NORMALIZE):
     if (is_normalize):
         train_x = normalize_data(train_x)
         test_x = normalize_data(test_x)

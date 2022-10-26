@@ -1,12 +1,16 @@
 import numpy as np
+from sklearn.svm import SVC
 
 PATH_X_TRAIN = "./data/X_train.csv"
 PATH_Y_TRAIN = "./data/Y_train.csv"
-ISCONTAINHEAD = True
-PENALTY = 0.01
+PATH_X_TEST = "./data/X_test.csv"
+PATH_Y_TEST = "./data/Y_test.csv"
+IS_CONTAINHEAD = True
+IS_NORMALIZE = False
+NEED_RESHAPE = False
+PENALTY = 0.001
 THRESHOLD = 1e-19
-STEP_SIZE = 0.01
-# STEP_SIZE = 1e-4
+STEP_SIZE = 0.0003
 MAX_ITERATION = 6000
 
 
@@ -17,8 +21,14 @@ def change_dir():
     return sys.path[0]
 
 
-def read_csv(path):
-    return np.loadtxt(path, dtype=float, delimiter=',', skiprows=int(ISCONTAINHEAD))
+def read_csv(path, option="x", need_reshape=NEED_RESHAPE):
+    data = np.loadtxt(path, dtype=float, delimiter=',',
+                      skiprows=int(IS_CONTAINHEAD))
+    if option == "y":
+        data[data == 0] = -1
+        if need_reshape:
+            data = np.reshape(data, (np.shape(data)[0], 1))
+    return data
 
 
 def normalize_data(data):
@@ -29,53 +39,26 @@ def normalize_data(data):
     return data
 
 
-def caculate_by_gradient_decent(data_x, data_y, penalty=PENALTY, threshold=THRESHOLD, step_size=STEP_SIZE, max_iteration=MAX_ITERATION):
-    data_x = normalize_data(data_x)
-    data_num = np.shape(data_x)[0]
-    feature_dim = np.shape(data_x)[1]
-    w = np.random.rand(feature_dim, 1)*0.01
-    w_0 = np.random.rand(1)*0.01
+def caculate_by_svm_sklearn(train_x, train_y, test_x, test_y, penalty=PENALTY, threshold=THRESHOLD, step_size=STEP_SIZE, max_iteration=MAX_ITERATION, is_normalize=IS_NORMALIZE):
+    svm = SVC(kernel='linear')
+    svm.fit(train_x, train_y)
 
-    it = 1
-    th = 0.1
-    while it < max_iteration and th > threshold:
-        a = np.tile(w_0, [data_num, 1])+data_x@w
-        ksi = a*data_y
-        index = (ksi < 1)[:, 0]
+    y_predict = svm.predict(test_x)
+    correct_prediction = np.equal(y_predict, test_y)
+    accuracy = np.mean(correct_prediction.astype(np.float))
+    print("acc:", accuracy)
 
-        dw = np.zeros([feature_dim, 1])
-        dw_0 = 0
-        # for w_other
-        dw = -np.transpose(data_x[index])@data_y[index]
-        dw = dw/data_num+penalty*w
-        # for w_0
-        dw_0 = -sum(data_y[index])/data_num
-
-        w_0_ = w_0-step_size*dw_0
-        w_ = w-step_size*dw
-
-        th = np.sum(np.square(w_ - w)) + np.square(w_0_ - w_0)
-        it = it + 1
-
-        w = w_
-        w_0 = w_0_
-
-        if it % 200 == 0:
-            y_predict = np.tile(w_0, [data_num, 1])+data_x@w
-            y_predict = [1 if i > 0.5 else 0 for i in y_predict ]
-            correct_prediction = abs(y_predict-data_y)
-            accuracy = np.mean(correct_prediction.astype(np.float))
-            print("epoch:", it, "acc:", accuracy, "th:", th)
-            # print(y_predict)
-    return w_0, w
+    return svm.intercept_[0], svm.coef_[0]
 
 
 def main():
-    data_x_train = read_csv(PATH_X_TRAIN)
-    data_y_train = read_csv(PATH_Y_TRAIN)
+    data_x_train = read_csv(PATH_X_TRAIN, "x")
+    data_y_train = read_csv(PATH_Y_TRAIN, "y")
+    data_x_test = read_csv(PATH_X_TEST, "x")
+    data_y_test = read_csv(PATH_Y_TEST, "y")
     print("read done!")
-    data_y_train = np.reshape(data_y_train, (np.shape(data_y_train)[0], 1))
-    print(caculate_by_gradient_decent(data_x_train, data_y_train))
+    print(caculate_by_svm_sklearn(data_x_train,
+          data_y_train, data_x_test, data_y_test))
 
 
 if __name__ == "__main__":
