@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}基本介绍}{3}{}%
+\contentsline {subsection}{\numberline {1.1}目的}{3}{}%
+\contentsline {subsection}{\numberline {1.2}环境}{3}{}%
+\contentsline {subsubsection}{\numberline {1.2.1}python环境}{3}{}%
+\contentsline {subsubsection}{\numberline {1.2.2}包环境}{3}{}%
+\contentsline {subsubsection}{\numberline {1.2.3}机器环境}{3}{}%
+\contentsline {section}{\numberline {2}SVM-sklearn}{3}{}%
+\contentsline {subsection}{\numberline {2.1}实现方法}{3}{}%
+\contentsline {subsection}{\numberline {2.2}参数}{4}{}%
+\contentsline {subsection}{\numberline {2.3}结果}{4}{}%
+\contentsline {section}{\numberline {3}SVM-gradient decent}{5}{}%
+\contentsline {subsection}{\numberline {3.1}实现方法}{5}{}%
+\contentsline {subsection}{\numberline {3.2}参数}{6}{}%
+\contentsline {subsection}{\numberline {3.3}结果}{6}{}%
+\contentsline {subsection}{\numberline {3.4}变化}{8}{}%
+\contentsline {section}{\numberline {4}对比与分析}{10}{}%
+\contentsline {subsection}{\numberline {4.1}时间对比}{10}{}%
+\contentsline {subsection}{\numberline {4.2}准确度对比}{10}{}%
+\contentsline {subsection}{\numberline {4.3}数据对比}{11}{}%
+\contentsline {subsection}{\numberline {4.4}结论}{11}{}%
